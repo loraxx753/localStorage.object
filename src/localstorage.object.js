@@ -13,7 +13,7 @@
  * @return {string} The resulting object turned into a string
  */
 var objectToString = function(object){
-  	
+		
 		// Initialize the variables
 		var array = [], propertyValue;
 		
@@ -49,22 +49,22 @@ var objectToString = function(object){
 	return "{" + array.join(", ") + "}";
 };
 
-var updateObject = function(object)
+var updateObject = function(objectName)
 {
 	// If HTML5's localStorage is available (by checking the Storage object) 
 	if(typeof(Storage)!=="undefined")
 	{
 		// If the localStorage's variable doesn't exist yet.
-		if(!localStorage.savedObject)
+		if(!localStorage[objectName])
 		{
 			// Set that variable to the desired object.
-			localStorage.savedObject = objectToString(object);
+			localStorage[objectName] = objectToString(window[objectName]);
 		}
 		// But if it DOES exist.
 		else
 		{
 			// Since localStorage only saves strings, then add a return before self calling the function.
-			var objectHolder = "return "+localStorage.savedObject;
+			var objectHolder = "return "+localStorage[objectName];
 
 			// Set the original variable to localStorage's updated information.
 			return (new Function(objectHolder))();
