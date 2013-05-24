@@ -28,6 +28,7 @@ var objectToString = function(object){
 
 				// If the property has a value, and that value is an object
 				if(propertyValue && typeof propertyValue == "object"){
+					console.log(arguments.callee(propertyValue).join(", "));
 					array[array.length]= '"'+property+'"' + ":{" + arguments.callee(propertyValue).join(", ") + "}";
 				}
 				else {
@@ -71,5 +72,12 @@ var updateObject = function(objectName) {
 			// Set the original variable to localStorage's updated information.
 			return (new Function(objectHolder))();
 		}
+	}
+}
+
+var deleteObject = function(objectName) {
+	if(localStorage.hasOwnProperty(objectName))
+	{
+		delete localStorage[objectName];
 	}
 }
