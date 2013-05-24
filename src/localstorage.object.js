@@ -3,81 +3,81 @@
  * object, with properties and methods, to localStorage so you can access it
  * between page loads?
  */
-
-/**
- * Takes in an object and turns it into a string
- *
- * Taken from www.davidpirek.com/blog/object-to-string-how-to-deserialize-json‎
- *
- * @param  {object} The object to convert
- * @return {string} The resulting object turned into a string
- */
-var objectToString = function(object){
-		
-		// Initialize the variables
-		var array = [], propertyValue;
-		
-		// Loop through the object's properties
-		for(var property in object){
+localStorage.constructor.prototype.object = {
+	/**
+	 * Takes in an object and turns it into a string
+	 *
+	 * Taken from www.davidpirek.com/blog/object-to-string-how-to-deserialize-json‎
+	 *
+	 * @param  {object} The object to convert
+	 * @return {string} The resulting object turned into a string
+	 */
+	objectToString  :  function(object){
 			
-			// Check if the object actually has that property
-			if(object.hasOwnProperty(property)){
+			// Initialize the variables
+			var array = [], propertyValue;
+			
+			// Loop through the object's properties
+			for(var property in object){
 				
-				// Get the value of the object's property
-				propertyValue = object[property];
+				// Check if the object actually has that property
+				if(object.hasOwnProperty(property)){
+					
+					// Get the value of the object's property
+					propertyValue = object[property];
 
-				// If the property has a value, and that value is an object
-				if(propertyValue && typeof propertyValue == "object"){
-					console.log(arguments.callee(propertyValue).join(", "));
-					array[array.length]= '"'+property+'"' + ":{" + arguments.callee(propertyValue).join(", ") + "}";
-				}
-				else {
-
-					// If the property value is a string, then call .toString() on it and wrap it in double quotes.
-					if(typeof propertyValue == "string"){
-						array[array.length] = [ '"'+property+'"'+ ":\"" + propertyValue.toString() + "\"" ];                 
+					// If the property has a value, and that value is an object
+					if(propertyValue && typeof propertyValue == "object"){
+						array[array.length]= '"'+property+'"' + ":{" + arguments.callee(propertyValue).join(", ") + "}";
 					}
-					// If it's not a string or an object, then just straight up .toString it
-					else{
-						array[array.length] = [ '"'+property+'"'+ ":" + propertyValue.toString()];
+					else {
+
+						// If the property value is a string, then call .toString() on it and wrap it in double quotes.
+						if(typeof propertyValue == "string"){
+							array[array.length] = [ '"'+property+'"'+ ":\"" + propertyValue.toString() + "\"" ];                 
+						}
+						// If it's not a string or an object, then just straight up .toString it
+						else{
+							array[array.length] = [ '"'+property+'"'+ ":" + propertyValue.toString()];
+						}
 					}
 				}
 			}
-		}
 
-	// Return the parsed object's array joined with commas, and wrapped in curly braces.
-	return "{" + array.join(", ") + "}";
-};
+		// Return the parsed object's array joined with commas, and wrapped in curly braces.
+		return "{" + array.join(", ") + "}";
+	},
 
-var saveObject = function(objectName)
-{
-	// If HTML5's localStorage is available (by checking the Storage object) 
-	if(typeof(Storage)!=="undefined")
+	save : function(objectName)
 	{
-		// Set that variable to the desired object.
-		localStorage[objectName] = objectToString(window[objectName]);
-	}
-};
-
-var updateObject = function(objectName) {
-	// If HTML5's localStorage is available (by checking the Storage object) 
-	if(typeof(Storage)!=="undefined")
-	{
-		// If the localStorage's variable doesn't exist yet.
-		if(localStorage[objectName])
+		// If HTML5's localStorage is available (by checking the Storage object) 
+		if(typeof(Storage)!=="undefined")
 		{
-			// Since localStorage only saves strings, then add a return before self calling the function.
-			var objectHolder = "return "+localStorage[objectName];
+			// Set that variable to the desired object.
+			localStorage[objectName] = this.objectToString(window[objectName]);
+		}
+	},
 
-			// Set the original variable to localStorage's updated information.
-			return (new Function(objectHolder))();
+	update : function(objectName) {
+		// If HTML5's localStorage is available (by checking the Storage object) 
+		if(typeof(Storage)!=="undefined")
+		{
+			// If the localStorage's variable doesn't exist yet.
+			if(localStorage[objectName])
+			{
+				// Since localStorage only saves strings, then add a return before self calling the function.
+				var objectHolder = "return "+localStorage[objectName];
+
+				// Set the original variable to localStorage's updated information.
+				return (new Function(objectHolder))();
+			}
+		}
+	},
+
+	remove : function(objectName) {
+		if(localStorage.hasOwnProperty(objectName))
+		{
+			delete localStorage[objectName];
 		}
 	}
-}
-
-var deleteObject = function(objectName) {
-	if(localStorage.hasOwnProperty(objectName))
-	{
-		delete localStorage[objectName];
-	}
-}
+};
