@@ -28,7 +28,6 @@ var objectToString = function(object){
 
 				// If the property has a value, and that value is an object
 				if(propertyValue && typeof propertyValue == "object"){
-					console.log(arguments.callee(propertyValue).join(", "));
 					array[array.length]= '"'+property+'"' + ":{" + arguments.callee(propertyValue).join(", ") + "}";
 				}
 				else {
@@ -49,19 +48,22 @@ var objectToString = function(object){
 	return "{" + array.join(", ") + "}";
 };
 
-var updateObject = function(objectName)
+var saveObject = function(objectName)
 {
 	// If HTML5's localStorage is available (by checking the Storage object) 
 	if(typeof(Storage)!=="undefined")
 	{
+		// Set that variable to the desired object.
+		localStorage[objectName] = objectToString(window[objectName]);
+	}
+};
+
+var updateObject = function(objectName) {
+	// If HTML5's localStorage is available (by checking the Storage object) 
+	if(typeof(Storage)!=="undefined")
+	{
 		// If the localStorage's variable doesn't exist yet.
-		if(!localStorage[objectName])
-		{
-			// Set that variable to the desired object.
-			localStorage[objectName] = objectToString(window[objectName]);
-		}
-		// But if it DOES exist.
-		else
+		if(localStorage[objectName])
 		{
 			// Since localStorage only saves strings, then add a return before self calling the function.
 			var objectHolder = "return "+localStorage[objectName];
@@ -70,4 +72,4 @@ var updateObject = function(objectName)
 			return (new Function(objectHolder))();
 		}
 	}
-};
+}
